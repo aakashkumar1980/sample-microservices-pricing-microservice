@@ -1,0 +1,29 @@
+###############################################################################################
+#                                      SPRING CONFIGURATIONS                                  #
+###############################################################################################
+spring.application.name:  pricing
+server:
+  port: 8080
+
+# SPRING: 404 support in RestExceptionHandler.java
+spring.mvc.throw-exception-if-no-handler-found: true
+spring.resources.add-mappings:  false 
+         
+server.servlet.session.timeout: 300  
+# SPRING: LOGGING
+logging.config: classpath:log4j2-spring.xml
+
+spring.jackson.serialization.FAIL_ON_EMPTY_BEANS: false
+
+# ZALANDO LOGBOOK
+logbook:
+  filter.enabled: true
+  write:
+    max-body-size: 450
+    
+springdoc.api-docs.path:  /api-docs
+springdoc.swagger-ui.path:  /swagger-ui-custom.html
+###############################################################################################
+#                                   APPLICATION DATA                                          #
+###############################################################################################
+records-size: ${record.size}

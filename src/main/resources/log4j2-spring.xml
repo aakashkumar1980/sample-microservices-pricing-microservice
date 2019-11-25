@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+	<!-- REFERENCE: https://howtodoinjava.com/log4j2/multiple-appenders/ -->
+	<Properties>
+		<Property name="LOG_PATTERN">%d %-5level [%thread] %logger : %msg%n</Property>
+	</Properties>
+
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT" follow="true">
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</Console>
+		<RollingFile name="errorLog"
+			fileName="${env:catalina.home}/logs/error.log"
+			filePattern="${env:catalina.home}/logs/error-%d{yyyy-MM-dd}-%i.log">
+			<LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY" />
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+			<!-- <DefaultRolloverStrategy max="10" /> -->
+		</RollingFile>
+		
+		
+		<File name="springLog"
+			fileName="${env:catalina.home}/logs/spring.log"
+			filePattern="${env:catalina.home}/logs/spring-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</File>
+		<File name="springMVCLog"
+			fileName="${env:catalina.home}/logs/spring-mvc.log"
+			filePattern="${env:catalina.home}/logs/spring-mvc-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</File>		
+		<RollingFile name="httpRequestLog"
+			fileName="${env:catalina.home}/logs/http-request.log"
+			filePattern="${env:catalina.home}/logs/http-request-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+		</RollingFile>
+		<File name="databaseJPALog"
+			fileName="${env:catalina.home}/logs/database-jpa.log"
+			filePattern="${env:catalina.home}/logs/database-jpa-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+		</File>		
+		<RollingFile name="databaseConnectionPoolLog"
+			fileName="${env:catalina.home}/logs/database-connection-pool.log"
+			filePattern="${env:catalina.home}/logs/database-connection-pool-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+		</RollingFile>		
+		<RollingFile name="databaseSqlLog"
+			fileName="${env:catalina.home}/logs/database-sql.log"
+			filePattern="${env:catalina.home}/logs/database-sql-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+		</RollingFile>
+		<RollingFile name="log"
+			fileName="${env:catalina.home}/logs/microservice.log"
+			filePattern="${env:catalina.home}/logs/microservice-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+		</RollingFile>	
+		
+		<RollingFile name="securityLog"
+			fileName="${env:catalina.home}/logs/security.log"
+			filePattern="${env:catalina.home}/logs/security-%d{yyyy-MM-dd}-%i.log">
+			
+			<PatternLayout pattern="${LOG_PATTERN}" />
+			<Policies><SizeBasedTriggeringPolicy size="1024KB" /></Policies>
+		</RollingFile>			
+	</Appenders>
+
+
+	<Loggers>
+		<!-- ################### -->
+		<!-- ### SPRING CORE ### -->
+		<!-- ################### -->
+		<!-- server port -->
+		<Logger name="org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainer" level="INFO" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- startup diagnostics -->
+		<Logger name="org.springframework.boot.diagnostics.FailureAnalyzers" level="TRACE" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- config .properties/.yml file loading -->
+		<Logger name="org.springframework.boot.context.config.ConfigFileApplicationListener" level="DEBUG" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- application class loading -->
+		<Logger name="org.springframework.context.annotation.ClassPathBeanDefinitionScanner" level="DEBUG" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- devtools -->
+		<Logger name="org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer" level="INFO" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>		
+		<!-- spring-boot app -->	
+		<Logger name="org.springframework.boot.SpringApplication" level="DEBUG" additivity="false">
+			<AppenderRef ref="springLog" />
+			<AppenderRef ref="Console" />
+		</Logger>		
+
+
+		<!-- ################## -->
+		<!-- ### SPRING MVC ### -->
+		<!-- ################## -->	
+		<!-- request mappings -->	
+		<Logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="INFO" additivity="false">
+			<AppenderRef ref="springMVCLog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- http logging -->
+		<AsyncLogger name="org.zalando.logbook" level="TRACE" includeLocation="true" additivity="false">
+			<AppenderRef ref="httpRequestLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>	
+			
+		<!-- ############################ -->
+		<!-- ### DATABASE, JPA & POOL ### -->
+		<!-- ############################ -->		
+		<!-- datasource config -->
+		<Logger name="com.zaxxer.hikari.HikariConfig" level="DEBUG" additivity="false">
+			<AppenderRef ref="databaseJPALog" />
+			<AppenderRef ref="Console" />
+		</Logger>		
+		<Logger name="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" level="INFO" additivity="false">
+			<AppenderRef ref="databaseJPALog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<!-- jpa repository -->		
+		<Logger name="org.springframework.data.repository.config.RepositoryConfigurationDelegate" level="DEBUG" additivity="false">
+			<AppenderRef ref="databaseJPALog" />
+			<AppenderRef ref="Console" />
+		</Logger>
+		<Logger name="org.hibernate.jpa.internal.util.LogHelper" level="DEBUG" additivity="false">
+			<AppenderRef ref="databaseJPALog" />
+			<AppenderRef ref="Console" />
+		</Logger>																	
+		<Logger name="org.springframework.data.rest.webmvc.RepositoryRestHandlerMapping" level="INFO" additivity="false">
+			<AppenderRef ref="databaseJPALog" />
+			<AppenderRef ref="Console" />
+		</Logger>			
+		<!-- connection-pool logging -->
+		<AsyncLogger name="com.zaxxer.hikari.pool.HikariPool" level="DEBUG" includeLocation="true" additivity="false">
+			<AppenderRef ref="databaseConnectionPoolLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>			
+		<AsyncLogger name="com.zaxxer.hikari.pool.PoolBase" level="DEBUG" includeLocation="true" additivity="false">
+			<AppenderRef ref="databaseConnectionPoolLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>		
+		<AsyncLogger name="com.zaxxer.hikari.pool.ProxyLeakTask" level="WARN" includeLocation="true" additivity="false">
+			<AppenderRef ref="databaseConnectionPoolLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>		
+		<!-- sql logging -->
+		<AsyncLogger name="org.hibernate.resource.jdbc.internal.AbstractLogicalConnectionImplementor" level="TRACE" additivity="false">
+			<AppenderRef ref="databaseSqlLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>	
+		<AsyncLogger name="org.hibernate.resource.jdbc.internal.ResourceRegistryStandardImpl" level="TRACE" additivity="false">
+			<AppenderRef ref="databaseSqlLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>
+		<AsyncLogger name="org.springframework.orm.jpa.EntityManagerFactoryUtils" level="DEBUG" additivity="false">
+			<AppenderRef ref="databaseSqlLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>							
+		<AsyncLogger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+			<AppenderRef ref="databaseSqlLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>
+		<AsyncLogger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" includeLocation="true" additivity="false">
+			<AppenderRef ref="databaseSqlLog" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>		
+		
+
+		<!-- #################### -->
+		<!-- ### MICROSERVICE ### -->
+		<!-- #################### -->
+		<AsyncLogger name="com.aakashkumar.microservices" level="DEBUG" includeLocation="true" additivity="false">
+			<AppenderRef ref="log" />
+			<AppenderRef ref="Console" />
+		</AsyncLogger>
+		
+		<Root level="WARN">
+			<AppenderRef ref="errorLog" />
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
+
+</Configuration>
