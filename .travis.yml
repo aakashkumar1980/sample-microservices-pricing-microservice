@@ -1,0 +1,21 @@
+language: java
+jdk:
+  - openjdk8
+
+# faster build - https://blog.travis-ci.com/2014-12-17-faster-builds-with-container-based-infrastructure
+sudo: false
+
+
+before_install:
+  # A] DockerHub Access Setup #
+  # create the below keys (i.e. DockerHub credentials) in the Travis CLI Project -> More Options -> Settings -> Environment Variables
+  - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_ID" --password-stdin 
+
+# B] Maven Build & Docker Image Push #  
+install: true
+script: mvn clean package dockerfile:push
+# NOTE: cache the build tool's repository
+cache:
+  directories:
+  - $HOME/.m2
+  - $HOME/.gradle 
