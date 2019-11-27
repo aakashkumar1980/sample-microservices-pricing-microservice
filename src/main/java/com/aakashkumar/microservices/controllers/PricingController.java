@@ -13,7 +13,7 @@ import com.aakashkumar.microservices.controllers.dto.ProductPriceDto;
 import com.aakashkumar.microservices.controllers.utils.ModelMapperUtils;
 import com.aakashkumar.microservices.db.services.PricingService;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/v1/prices")
 public class PricingController {
@@ -21,7 +21,6 @@ public class PricingController {
 	@Autowired ModelMapperUtils modelMapperUtils;
 	@Autowired PricingService pricingService;
 
-	@CrossOrigin
 	@GetMapping("/")
 	public List<ProductPriceDto> getPrices(@RequestParam List<Long> productIds) {
 		return modelMapperUtils.mapEntityToDto(pricingService.getPrices(productIds), ProductPriceDto.class);
