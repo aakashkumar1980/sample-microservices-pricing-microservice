@@ -3,6 +3,7 @@ package com.aakashkumar.microservices.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,7 @@ public class PricingController {
 	@Autowired ModelMapperUtils modelMapperUtils;
 	@Autowired PricingService pricingService;
 
+	@CrossOrigin
 	@GetMapping("/")
 	public List<ProductPriceDto> getPrices(@RequestParam List<Long> productIds) {
 		return modelMapperUtils.mapEntityToDto(pricingService.getPrices(productIds), ProductPriceDto.class);
