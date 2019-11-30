@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: pricing-microservice
-        image: aakashkumar1980/pricing-microservice:1.0.0
+        image: aakashkumar1980/pricing-microservice
         ports:
           - containerPort: 8080
           # NOTE:
