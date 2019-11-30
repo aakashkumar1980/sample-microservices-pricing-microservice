@@ -60,8 +60,8 @@ spec:
   selector:
     component: pricing-microservice
   ports:
-  - port:  8080
-    targetPort:  8080
+  - targetPort:  8080
+    port:  8080
     # NOTE:
     # targetPort -> container port
     # port -> port to be exposed to other containers
