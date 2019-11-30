@@ -1,7 +1,10 @@
 language: java
 jdk:
   - openjdk8
-
+env:
+  global:
+    # For maintaining the image tag based on Git Checkin SHA
+    - GIT_SHA=$(git rev-parse HEAD)
 
 before_install:
   # A] DockerHub Login
@@ -13,7 +16,11 @@ before_install:
 install: true
 script: 
   # B] Maven Build & Docker Image Push
-  - mvn clean package dockerfile:push
+  - mvn clean package 
+  - mvn dockerfile:build
+  - mvn dockerfile:tag@tag-version -Dgit-sha-tag=$GIT_SHA
+  - mvn dockerfile:push@push-latest
+  - mvn dockerfile:push@push-version 
   - echo ">> maven build and dockerhub push successful."
   
 
