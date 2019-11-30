@@ -1,0 +1,68 @@
+### DEPLOYMENT ###
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing-microservice-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: pricing-microservice
+  # pods
+  template:
+    metadata:
+      labels:
+        component: pricing-microservice
+    spec:
+      containers:
+      - name: pricing-microservice
+        image: aakashkumar1980/pricing-microservice:1.0.0
+        ports:
+          - containerPort: 8080
+          # NOTE:
+          # containerPort -> should be same as that of "server.port: 8080" 
+          #                  defined in 'src/main/resources/application.yml' file          
+        env:
+          - name: JVM_OPTS
+            value: -Xms128m -Xmx384m -XX:MaxPermSize=256m -XX:+UseSerialGC -Xss512k -XX:MaxRAM=72m
+          - name: catalina.home
+            value: /usr/app/pricing-microservice/_logs
+
+          - name: record.size
+            value: '10'
+          - name: db.url
+            value: sample-microservices-db.ct76hhjyahnq.ap-south-1.rds.amazonaws.com
+          - name: db.port
+            value: '3306'
+          - name: db.name
+            value: msc_pricing
+          - name: db.username
+            value: microuser
+          - name: db.password
+            valueFrom:
+              secretKeyRef:
+                name: sample-microservice-dbsecret
+                key:  DB_PASSWORD
+            # NOTE: Create encrypted password using the below command and use it.
+            # $ sudo kubectl create secret generic $SECRET-NAME --from-literal $KEY=$VALUE
+        
+
+---
+### SERVICE ###
+kind: Service
+apiVersion: v1
+metadata:
+  name:  pricing-microservice-clusterip-service
+
+spec:
+  type: ClusterIP
+  selector:
+    component: pricing-microservice
+  ports:
+  - port:  8080
+    targetPort:  8080
+    # NOTE:
+    # targetPort -> container port
+    # port -> port to be exposed to other containers
+    
