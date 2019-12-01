@@ -1,20 +1,47 @@
+sudo: required
 language: java
 jdk:
   - openjdk8
+services:
+  - docker
+
 env:
   global:
     # For maintaining the image tag based on Git Checkin SHA
     - GIT_SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 before_install:
-  # A] DockerHub Login
-  # create the below keys (i.e. DockerHub credentials) in the Travis CLI Project -> More Options -> Settings -> Environment Variables
+  # A] DOWNLOAD AND CONFIGURE GCP SDK ON TRAVIS CI INSTANCE
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in travis-service-account.json.enc -out travis-service-account.json -d
+  # got this command from the pre-requisite step of encrypting the GCP Service Account JSON file.
+  
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+    # download GCP SDK and install in the travis ci instance
+  
+  - source $HOME/google-cloud-sdk/path.bash.inc
+    # go to installed GCP SDK home directory and run initializing command  
+  
+  - gcloud components update kubectl
+    # install the 'kubectl' component which will used to create pods etc.
+
+  - gcloud auth activate-service-account --key-file travis-service-account.json
+    # prividing the authorization by using the GCP Service Account JSON file
+
+  - gcloud config set project infosys-webinar
+  - gcloud config set compute/zone asia-south1
+  - gcloud container clusters get-credentials sample-microservices-k8-cluster
+    # enter project-id, kubernetes cluster 'location' & the 'name' 
+  - echo ">> completed GCP installation and configuration"  
+
+  # B] Login to Docker Hub 
+  # (NOTE: create the below keys in the Travis CLI Project -> More Options -> Settings -> Environment Variables)
   - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_ID" --password-stdin 
   - echo ">> docker login successful."
 
 # to disable the default installation routine of maven commands  
 install: true
-script: 
+script:
   # B] Maven Build & Docker Image Push
   - mvn clean package 
   - mvn dockerfile:build
@@ -22,7 +49,13 @@ script:
   - mvn dockerfile:push@push-latest
   - mvn dockerfile:push@push-version 
   - echo ">> maven build and dockerhub push successful."
-  
+
+# DEPLOYMENT
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
 
 # NOTE: cache the build tool's repository
 cache:
