@@ -11,7 +11,7 @@
 	<groupId>com.aakashkumar.microservices</groupId>
 	<artifactId>pricing-microservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>pricing-microservice</name>
+	<name>${project.artifactId}</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
