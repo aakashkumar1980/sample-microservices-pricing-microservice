@@ -29,7 +29,7 @@ before_install:
     # prividing the authorization by using the GCP Service Account JSON file
 
   - gcloud config set project infosys-webinar
-  - gcloud config set compute/zone asia-south1
+  - gcloud config set compute/zone asia-south1-a
   - gcloud container clusters get-credentials sample-microservices-k8-cluster
     # enter project-id, kubernetes cluster 'location' & the 'name' 
   - echo ">> completed GCP installation and configuration"  
