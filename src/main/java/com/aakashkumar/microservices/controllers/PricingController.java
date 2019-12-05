@@ -3,7 +3,6 @@ package com.aakashkumar.microservices.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,7 +12,7 @@ import com.aakashkumar.microservices.controllers.dto.ProductPriceDto;
 import com.aakashkumar.microservices.controllers.utils.ModelMapperUtils;
 import com.aakashkumar.microservices.db.services.PricingService;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/v1/prices")
 public class PricingController {
